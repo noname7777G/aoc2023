@@ -1,17 +1,13 @@
-local total_lines = vim.api.nvim_buf_line_count(0)
-
-local total = 0
-
 local noun_table = {
-  one = 1,
-  two = 2,
-  three = 3,
-  four = 4,
-  five = 5,
-  six = 6,
-  seven = 7,
-  eight = 8,
-  nine = 9,
+  one = "o1e",
+  two = "t2o",
+  three = "t3e",
+  four = "4",
+  five = "5e",
+  six = "6",
+  seven = "7n",
+  eight = "e8t",
+  nine = "n9e",
   "one",
   "two",
   "three",
@@ -23,27 +19,35 @@ local noun_table = {
   "nine",
 }
 
-for i = 1, total_lines, 1 do
-  local line = vim.fn.getline(i)
+local average_time
 
-  for _, noun in ipairs(noun_table) do
-    line = line:gsub(noun, noun_table[noun])
+for i = 0, 1000, 1 do
+  local total = 0
+
+  local start = os.clock()
+
+  for _, line in pairs(vim.api.nvim_buf_get_lines(0, 0, -1, false)) do
+    for _, noun in ipairs(noun_table) do
+      line = line:gsub(noun, noun_table)
+    end
+
+    line:gsub("^%D-(%d).-(%d?)%D-$", function(d_1, d_2)
+
+      if d_2 ~= "" then
+        total = total + tonumber(d_1 .. d_2)
+      else
+        total = total + tonumber(d_1 .. d_1)
+      end
+    end)
   end
 
-  print(line)
+  local stop = os.clock()
 
-  local digits = line:gsub("%D", "")
+  local total_time = stop - start
+  average_time = total_time / 1000
 
-  if digits:len() == 1 then
-    digits = digits:gsub("^(%d)$", "%1%1")
-  end
+  print(total)
 
-  if digits:len() > 2 then
-    local d_1, d_2
-    d_1, d_2 = digits:match("^(%d)%d-(%d)$")
-    digits = d_1 .. d_2
-  end
-
-  total = total + tonumber(digits)
 end
-print(total)
+
+print("Average time:", average_time)
