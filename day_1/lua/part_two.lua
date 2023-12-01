@@ -19,12 +19,8 @@ local noun_table = {
   "nine",
 }
 
-local average_time
-
-for i = 0, 1000, 1 do
+Parse_numbers = function()
   local total = 0
-
-  local start = os.clock()
 
   for _, line in pairs(vim.api.nvim_buf_get_lines(0, 0, -1, false)) do
     for _, noun in ipairs(noun_table) do
@@ -33,21 +29,29 @@ for i = 0, 1000, 1 do
 
     line:gsub("^%D-(%d).-(%d?)%D-$", function(d_1, d_2)
 
-      if d_2 ~= "" then
-        total = total + tonumber(d_1 .. d_2)
-      else
-        total = total + tonumber(d_1 .. d_1)
-      end
+    if d_2 ~= "" then
+      total = total + tonumber(d_1 .. d_2)
+    else
+      total = total + tonumber(d_1 .. d_1)
+    end
     end)
   end
+end
+
+local total_time = 0
+
+for i = 0, 1000, 1 do
+  local start = os.clock()
+
+  Parse_numbers()
 
   local stop = os.clock()
 
-  local total_time = stop - start
-  average_time = total_time / 1000
+  local time = stop - start
 
-  print(total)
+  total_time = total_time + time
 
 end
 
-print("Average time:", average_time)
+print("Average:", total_time / 1000)
+
