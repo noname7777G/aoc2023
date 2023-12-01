@@ -55,3 +55,4 @@ end
 
 print("Average:", total_time / 1000)
 
+--Averages 8.68e-6 seconds on my latop (AMD Ryzen 9 4900HS 16 X 3.00GHz)
